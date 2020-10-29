@@ -23,18 +23,19 @@ Primeira VE de ProLog
 
 tamanho_lista([], 0).
 
-tamanho_lista([X1|X2], Z):-
-  tamanho_lista(X2, Z1),
-  Z is Z1+1.
+tamanho_lista([_|X], Z):-
+  tamanho_lista(X, Y),
+  Z is Y+1.
 
 ultimo_lista([X], X).
 
-ultimo_lista([X1|X2], Z):-
-  ultimo_lista(X2, Z).
+ultimo_lista([_|X], Z):-
+  ultimo_lista(X, Z).
 
-membro_lista(X, [X|Y]).
-membro_lista(Y, [X1|X2]):-
-  membro_lista(Y, X2). 
+membro_lista(X, [X|_]).
+
+membro_lista(Y, [_|X]):-
+  membro_lista(Y, X). 
 
 lista_sem_duplicados([], []).
 
@@ -43,25 +44,28 @@ lista_sem_duplicados([X1|X2], Y):-
   lista_sem_duplicados(X2, Y).
 
 lista_sem_duplicados([X1|X2], Y):-
-  lista_sem_duplicados(X2, Y1),
-  Y = [X1|Y1].
+  lista_sem_duplicados(X2, Z),
+  Y = [X1|Z].
 
 % questao 1
+
 lista_sem_ultimo([], []).
 
-lista_sem_ultimo([H|T], K) :-
-  tamanho_lista(T, L),
-  L =:= 1,
-  K = [H].
+lista_sem_ultimo([X1|X2], K) :-
+  tamanho_lista(X2, L),
+  L = 1,
+  K = [X1].
 
-lista_sem_ultimo([H|T], K) :-
-  lista_sem_ultimo(T, J),
-  K = [H|J].
+lista_sem_ultimo([X1|X2], K) :-
+  lista_sem_ultimo(X2, Y),
+  K = [X1|Y].
 
-soma_lista([H|T], K) :-
-  tamanho_lista(T, L),
-  L =:= 0,
-  K = [H].
+soma_lista([], []).
+
+soma_lista([X1|X2], K) :-
+  tamanho_lista(X2, L),
+  L = 0,
+  K = [X1].
 
 soma_lista(X, K) :-
   lista_sem_ultimo(X, Y),
@@ -73,26 +77,28 @@ soma_lista(X, K) :-
 
 % questao 2
 
-posicao_certa([], [], 0).
+posicao_certa([], _, 0).
+
+posicao_certa(_, [], 0).
 
 posicao_certa([X1|X2], [Y1|Y2], Z) :-
   X1 = Y1,
   posicao_certa(X2, Y2, Z1),
   Z is Z1+1.
 
-posicao_certa([X1|X2], [Y1|Y2], Z) :-
+posicao_certa([_|X2], [_|Y2], Z) :-
   posicao_certa(X2, Y2, Z1),
   Z is Z1.
 
-posicao_errada(L, [], 0).
-posicao_errada([], L, 0).
+posicao_errada(_, [], 0).
+posicao_errada([], _, 0).
 
 posicao_errada([X1|X2], Y, Z) :-
   membro_lista(X1, Y),
   posicao_errada(X2, Y, Z1),
   Z is Z1+1.
 
-posicao_errada([X1|X2], Y, Z) :-
+posicao_errada([_|X2], Y, Z) :-
   posicao_errada(X2, Y, Z1),
   Z is Z1.
 
@@ -123,8 +129,8 @@ junte([L1|L2], [K1|K2], M) :-
 
 % questao 4
 
-prog_prev(L, [], []).
-prog_prev([], L, []).
+prog_prev(_, [], []).
+prog_prev([], _, []).
 
 prog_prev([K1|K2], L2, [K1|R]):-
   membro_lista(K1, L2),
